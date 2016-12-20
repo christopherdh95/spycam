@@ -1,0 +1,169 @@
+<html><head>
+
+	<title>Überwachungskamera</title>
+	<link rel="icon" type="image/ico" href="/fav.ico">
+	<style type="text/css">
+		html {
+			height: 100%;
+			background: #eeeee8;
+			overflow-x: hidden;
+		}
+		body {
+			background: #eeeee8;
+		}
+		#header h1{
+			font-size: 2em;
+			text-align: center;
+			line-height: 2;
+			margin:0;
+		}
+		#header #recodInfoView{
+			background: #0cab11;
+			height: 30px;
+			position: absolute;
+			padding: 4px;
+			margin: 4px;
+			border: 3px solid black;
+			border-radius: 10px;
+		}
+		#header #recodInfoView img{
+			width: 20px;
+		}
+		#header img{
+			height: 60px;
+		}
+		#header #layoutSelector {
+			float: right;
+		}
+
+		
+		#header #diskusageMonitor{
+			text-align: center;
+			width: 100%;
+		}
+		
+		#header a{
+			float:right;
+		}
+		
+		.show{ display:inline-block;}
+		.hide{ display:none;}
+		
+		#webcamView{
+			position:relative;
+			margin: 0 auto;
+			width: 100%;
+			height: 100%;
+			text-align: center;
+		}
+		#webcamView img{
+			text-align: center;
+			border: 1px solid black;
+			box-sizing: border-box;
+		}
+		#webcamView.listView{
+			margin: 0 auto;
+		}
+		#webcamView.listView img{
+			max-height: auto;
+			max-width: auto;
+			height: auto;
+			width:70%;
+			margin-bottom: 4px;
+			margin: 0 15% 4px 15%
+ 		}
+		#webcamView.iconView img{
+			max-height: 50%;
+			max-width: 33%;
+			width: auto;
+			height: auto;
+		}
+	</style>
+	<script type="text/javascript">
+		window.onload = function(){
+			var diskUsageView = document.getElementById("diskUsageView")
+			var recodInfoView = document.getElementById("recodInfoView")
+
+			var listViewBtn = document.getElementById("listView")
+			var iconViewBtn = document.getElementById("iconView")
+			
+			var webcamView = document.getElementById("webcamView")
+			
+			listViewBtn.addEventListener("click", function(){
+				webcamView.className = "listView"
+			})
+			
+			iconViewBtn.addEventListener("click", function(){
+				webcamView.className = "iconView"
+			})
+			
+			function diskUsage() {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+				 diskUsageView.innerHTML = this.responseText;
+				}
+			  };
+			  xhttp.open("GET", "/info", true);
+			  xhttp.send();
+			}
+			
+			function getMotionState() {
+			  var xhttp = new XMLHttpRequest();
+			  xhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					console.log(this.responseText);
+					if(this.responseText==1){
+						recodInfoView.style.background = "red";
+					} else {
+						recodInfoView.style.background = "#0cab11";
+					}
+				}
+			  };
+			  xhttp.open("GET", "/state", true);
+			  xhttp.send();
+			}
+			
+			setInterval(function(){
+				getMotionState();
+			}, 1000); // check every half second
+			
+			setInterval(function(){
+				diskUsage();
+			}, (1000*60*5)); // check every 5 minutes
+			diskUsage();
+			getMotionState();
+		}
+	</script>
+</head>
+<body>
+	<div id="header">
+		<div id="recodInfoView">
+			<div id="recodInfoView0"><img src=/cctv.png></div>
+			<div id="recodInfoView1"><img src=/cctv.png></div>
+		</div>
+		<div id="layoutSelector">
+			<button id="listView">Liste</button>
+			<button id="iconView">Icons</button>
+		</div>
+		<h1>
+			Überwachungssystem - Rita+Pazi
+			
+		</h1>
+		<div id="diskusageMonitor">
+			<span> Speicherplatz frei: </span>
+			<span id="diskUsageView"></span>
+			<span>%</span>
+		</div>
+
+
+		<hr>
+	</div>
+	<div id="webcamView" class="listView">
+		<!--<img src=http://localhost:3330/ >
+		<img src=http://localhost:3301/ >
+		-->
+	</div>
+	
+	
+</body></html>
