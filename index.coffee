@@ -3,10 +3,10 @@ fs = require 'fs'
 
 cameras = 2
 
-imageFolder = '/home/drs/imagesFromMotion/'
+imageFolder = '/home/ritapazi/imagesFromMotion/'
 
 app = express()
-app.use express.static 'public'
+app.use express.static '/home/ritapazi/spycam/public'
 
 app.get '/', (req, res)-> res.end()
 
@@ -16,13 +16,7 @@ app.get '/info', (req, res)->
 	diskUsage(cbFunct)
 
 app.get '/state', (req, res)->
-	data =''
-	cam = c = cameras
-
-	cbFunct = (status)->
-		data+='c'+cam+':'+status
-	while(cam--)
-		readStatus(cbFunct, cam)
+	res.end readStatus()
 
 server = app.listen 3333, ()->
    host = server.address().address
@@ -40,10 +34,13 @@ diskUsage = (cb)->
 		cb dfInPercent
 
 readStatus = (cb, camNr)->
-	fs.readFile 'state'+camNr+'.info', 'utf8', (err,data)->
-	  if (err) then console.log(err)
-	  else cb data
-
+	data = ""
+	c = cameras
+	while c--
+		status = fs.readFileSync 'state'+c+'.info', 'utf8'
+		data = status+"_"+data
+	data
+	
 oldestFolder = (dir, cb)->
 	list = fs.readdir dir, (err, res)->
 		console.log err if err

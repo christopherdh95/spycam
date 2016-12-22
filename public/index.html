@@ -1,6 +1,6 @@
 <html><head>
 
-	<title>Überwachungskamera</title>
+	<title>Chicken-SPY</title>
 	<link rel="icon" type="image/ico" href="/fav.ico">
 	<style type="text/css">
 		html {
@@ -17,17 +17,21 @@
 			line-height: 2;
 			margin:0;
 		}
-		#header #recodInfoView{
-			background: #0cab11;
-			height: 30px;
+		#header #recordInfoView {
+			top: 80px;
+			left: 4px;
 			position: absolute;
-			padding: 4px;
-			margin: 4px;
-			border: 3px solid black;
-			border-radius: 10px;
+
 		}
-		#header #recodInfoView img{
-			width: 20px;
+		#header #recordInfoView div {
+			background: #0cab11;
+			color: #eeeee8;
+			text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+			display: inline-block;
+			width: auto;
+			border: 1px solid black;
+			padding: 4px;
+			margin: 0 4px;
 		}
 		#header img{
 			height: 60px;
@@ -73,8 +77,8 @@
 			margin: 0 15% 4px 15%
  		}
 		#webcamView.iconView img{
-			max-height: 50%;
-			max-width: 33%;
+			max-height: 100%;
+			max-width: 49%;
 			width: auto;
 			height: auto;
 		}
@@ -82,7 +86,7 @@
 	<script type="text/javascript">
 		window.onload = function(){
 			var diskUsageView = document.getElementById("diskUsageView")
-			var recodInfoView = document.getElementById("recodInfoView")
+			var recordInfoView = document.getElementById("recordInfoView")
 
 			var listViewBtn = document.getElementById("listView")
 			var iconViewBtn = document.getElementById("iconView")
@@ -112,12 +116,18 @@
 			  var xhttp = new XMLHttpRequest();
 			  xhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 200) {
-					console.log(this.responseText);
-					if(this.responseText==1){
-						recodInfoView.style.background = "red";
-					} else {
-						recodInfoView.style.background = "#0cab11";
+					states = this.responseText.split("_")
+					states.pop();
+					i = states.length;
+					while(i--){
+						state = states[i];
+						if(state==1){
+							recordInfoView.children[i].style.background = "red";
+						} else {
+							recordInfoView.children[i].style.background = "#0cab11";
+						}
 					}
+						
 				}
 			  };
 			  xhttp.open("GET", "/state", true);
@@ -138,17 +148,18 @@
 </head>
 <body>
 	<div id="header">
-		<div id="recodInfoView">
-			<div id="recodInfoView0"><img src=/cctv.png></div>
-			<div id="recodInfoView1"><img src=/cctv.png></div>
+		<div id="recordInfoView">
+			<div id="">Stall</div>
+			<div id="">Terrasse</div>
 		</div>
 		<div id="layoutSelector">
 			<button id="listView">Liste</button>
 			<button id="iconView">Icons</button>
 		</div>
 		<h1>
-			Überwachungssystem - Rita+Pazi
-			
+						<img src=/cctv.png>
+
+			Chicken-SPY
 		</h1>
 		<div id="diskusageMonitor">
 			<span> Speicherplatz frei: </span>
@@ -159,10 +170,9 @@
 
 		<hr>
 	</div>
-	<div id="webcamView" class="listView">
-		<!--<img src=http://localhost:3330/ >
-		<img src=http://localhost:3301/ >
-		-->
+	<div id="webcamView" class="iconView">
+		<img src=http://localhost:3330/ >
+		<img src=http://localhost:3331/ >
 	</div>
 	
 	
